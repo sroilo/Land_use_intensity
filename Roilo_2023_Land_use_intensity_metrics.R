@@ -5,7 +5,7 @@
 # over the Mulde River Basin, Germany.
 # Reference: Roilo et al. "A multidimensional approach is needed to better quantify land-use intensity in biodiversity models".
 # Author: Stephanie Roilo, Technische Universität Dresden
-# Date: last updated on March 13th, 2023.
+# Date: last updated on March 31th, 2023.
 #
 ###################################################
 
@@ -327,16 +327,12 @@ squ$SD = apply(squ[,c(2:11)],1, sd, na.rm = TRUE)
 squaa = bind_cols(sqgrid, squ[,12:15])
 squaa = squaa[squaa$UAA>0,]
 # plot and save maps to file
-m1 = tm_shape(squaa) + tm_polygons("mean", palette="Reds", title = "Mean", border.alpha = 0.1) + 
+m1 = tm_shape(squaa) + tm_polygons("mean", palette="Reds", title = "Mean LUI", border.alpha = 0.1) + 
   tm_compass(type = "8star", position = c("center", "top")) +
   tm_scale_bar(breaks = c(0,15,30), text.size = 1, position = c("right", "bottom")) + 
   tm_layout(legend.position = c("right", "top"), legend.text.size = 1, legend.title.size=1.5)
-tmap_save(m1, width= 10, height=7, filename="Land use intensity/images/maps/Square_mean.jpeg")
-m2 = tm_shape(squaa) + tm_polygons("SD", palette="Blues", title = "Standard deviation", border.alpha = 0.1) + 
-  tm_compass(type = "8star", position = c("center", "top")) +
-  tm_scale_bar(breaks = c(0,15,30), text.size = 1, position = c("right", "bottom")) + 
+m2 = tm_shape(squaa) + tm_polygons("SD", palette="Blues", title = "Std. deviation", border.alpha = 0.1,breaks = c(0,0.1,0.2,0.3,0.4,0.6)) + 
   tm_layout(legend.position = c("right", "top"), legend.text.size = 1, legend.title.size=1.5)
-tmap_save(m2, width= 10, height=7, filename="Land use intensity/images/maps/Square_SD.jpeg")
 
 ## do the same with the hexagonal and voronoi grid
 hex$mean = rowMeans(hex[,c(2:11)])
@@ -345,16 +341,10 @@ hex$SD = apply(hex[,c(2:11)],1, sd, na.rm = TRUE)
 hexuaa = bind_cols(hexgrid, hex[,12:15])
 hexuaa = hexuaa[hexuaa$UAA>0,]
 # plot and save maps to file
-m1 = tm_shape(hexuaa) + tm_polygons("mean", palette="Reds", title = "Mean", border.alpha = 0.1) + 
-  tm_compass(type = "8star", position = c("center", "top")) +
-  tm_scale_bar(breaks = c(0,15,30), text.size = 1, position = c("right", "bottom")) + 
+m3 = tm_shape(hexuaa) + tm_polygons("mean", palette="Reds", title = "Mean LUI", border.alpha = 0.1) + 
+    tm_layout(legend.position = c("right", "top"), legend.text.size = 1, legend.title.size=1.5)
+m4 = tm_shape(hexuaa) + tm_polygons("SD", palette="Blues", title = "Std. deviation", border.alpha = 0.1, breaks = c(0,0.1,0.2,0.3,0.4,0.6)) + 
   tm_layout(legend.position = c("right", "top"), legend.text.size = 1, legend.title.size=1.5)
-tmap_save(m1, width= 10, height=7, filename="Land use intensity/images/maps/Hexagon_mean.jpeg")
-m2 = tm_shape(hexuaa) + tm_polygons("SD", palette="Blues", title = "Standard deviation", border.alpha = 0.1) + 
-  tm_compass(type = "8star", position = c("center", "top")) +
-  tm_scale_bar(breaks = c(0,15,30), text.size = 1, position = c("right", "bottom")) + 
-  tm_layout(legend.position = c("right", "top"), legend.text.size = 1, legend.title.size=1.5)
-tmap_save(m2, width= 10, height=7, filename="Land use intensity/images/maps/Hexagon_SD.jpeg")
 
 # voronoi grid
 voro$mean = rowMeans(voro[,c(2:11)])
@@ -363,21 +353,24 @@ voro$SD = apply(voro[,c(2:11)],1, sd, na.rm = TRUE)
 vorouaa = bind_cols(vor, voro[,12:15])
 vorouaa = vorouaa[vorouaa$UAA>0,]
 # plot and save maps to file
-m1 = tm_shape(vorouaa) + tm_polygons("mean", palette="Reds", title = "Mean", border.alpha = 0.1) + 
-  tm_compass(type = "8star", position = c("center", "top")) +
-  tm_scale_bar(breaks = c(0,15,30), text.size = 1, position = c("right", "bottom")) + 
+m5 = tm_shape(vorouaa) + tm_polygons("mean", palette="Reds", title = "Mean LUI", border.alpha = 0.1) + 
   tm_layout(legend.position = c("right", "top"), legend.text.size = 1, legend.title.size=1.5)
-tmap_save(m1, width= 10, height=7, filename="Land use intensity/images/maps/Voronoi_mean.jpeg")
-m2 = tm_shape(vorouaa) + tm_polygons("SD", palette="Blues", title = "Standard deviation", border.alpha = 0.1) + 
-  tm_compass(type = "8star", position = c("center", "top")) +
-  tm_scale_bar(breaks = c(0,15,30), text.size = 1, position = c("right", "bottom")) + 
+m6 = tm_shape(vorouaa) + tm_polygons("SD", palette="Blues", title = "Std. deviation", border.alpha = 0.1, breaks = c(0,0.1,0.2,0.3,0.4,0.6)) + 
   tm_layout(legend.position = c("right", "top"), legend.text.size = 1, legend.title.size=1.5)
-tmap_save(m2, width= 10, height=7, filename="Land use intensity/images/maps/Voronoi_SD.jpeg")
-
+# save image
+tmap_save(tmap_arrange(m1,m3, m5,m2,m4, m6), width= 11, height=11, filename="Land use intensity/images/maps/All_mean_SD_maps_20230326.jpeg")
 # save newly prepared grids to file
 st_write(squaa, "Land use intensity/metrics/SqUAA.shp")
 st_write(hexuaa, "Land use intensity/metrics/HexUAA.shp")
 st_write(vorouaa, "Land use intensity/metrics/VoroUAA.shp")
+
+# make scatterplots of SD ~ mean LUI values with loess smooth line
+ggplot(squaa, aes(mean, SD)) + geom_point(size=.3) + geom_smooth(method="loess", se=F, col="red") +
+  theme_minimal() + xlab("Mean LUI") + ylab("Standard deviation") + xlim(0.15,1) + ylim(0.1,0.52) + ggtitle("Square grid")
+ggplot(hexuaa, aes(mean, SD)) + geom_point(size=.3) + geom_smooth(method="loess", se=F, col="red") +
+  theme_minimal() + xlab("Mean LUI") + ylab("Standard deviation") + xlim(0.15,1) + ylim(0.1,0.52) + ggtitle("Hexagonal grid")
+ggplot(vorouaa, aes(mean, SD)) + geom_point(size=.3) + geom_smooth(method="loess", se=F, col="red") +
+  theme_minimal() + xlab("Mean LUI") + ylab("Standard deviation") + xlim(0.15,1) + ylim(0.1,0.52) + ggtitle("Voronoi grid")
 
 #### MAKE PLOTS of the different grids & metrics  -----------------------------------------
 library(tmap)

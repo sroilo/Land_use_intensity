@@ -55,14 +55,14 @@ vsax <- generateSpFromFun(raster.stack = env,
 # plot species response plots
 plotResponse(vsax)
 # save suitability raster to file
-writeRaster(vsax$suitab.raster, "C:/Users/sroilo/Desktop/BESTMAP documents/Papers/Land use intensity/revision/VirtualSp_suitability_20230305F.tif")
+writeRaster(vsax$suitab.raster, "C:/Users/sroilo/Desktop/BESTMAP documents/Data/DE_Mulde/Land use intensity/virtualSpecies/VirtualSp_suitability_20230305F.tif")
 
 #convert the suitability raster into a binary presence-absence raster using a logistic curve
 set.seed(13)
 vsax_PA <- convertToPA(vsax, PA.method = "probability", prob.method = "logistic", beta = 0.3, alpha = -0.05, plot=T)
 # save rasters to file
-writeRaster(vsax_PA$probability.of.occurrence, "C:/Users/sroilo/Desktop/BESTMAP documents/Papers/Land use intensity/revision/VirtualSp_ProbOcc_20230305F.tif")
-writeRaster(vsax_PA$pa.raster, "C:/Users/sroilo/Desktop/BESTMAP documents/Papers/Land use intensity/revision/VirtualSp_PA_20230305F.tif")
+writeRaster(vsax_PA$probability.of.occurrence, "C:/Users/sroilo/Desktop/BESTMAP documents/Data/DE_Mulde/Land use intensity/virtualSpecies/VirtualSp_ProbOcc_20230305F.tif")
+writeRaster(vsax_PA$pa.raster, "C:/Users/sroilo/Desktop/BESTMAP documents/Data/DE_Mulde/Land use intensity/virtualSpecies/VirtualSp_PA_20230305F.tif")
 
 # sample virtual species occurrence at 500 random points, only in grid cells which have UAA>0
 uaa = as(sqgrid[sqgrid$UAA>0,], "Spatial")
@@ -84,10 +84,10 @@ sum(is.na(vsax_points$FID_SQ))  # 0
 # add spatial coordinates to the dataframe
 vsax_points = bind_cols(st_coordinates(vsax_points), vsax_points)
 # save to file
-#st_write(vsax_points, "C:/Users/sroilo/Desktop/BESTMAP documents/Papers/Land use intensity/revision/VirtualSp_sampled_points_SQ_202030305F.gpkg")
+#st_write(vsax_points, "C:/Users/sroilo/Desktop/BESTMAP documents/Data/DE_Mulde/Land use intensity/virtualSpecies/VirtualSp_sampled_points_SQ_202030305F.gpkg")
 
 ### MODELLING -----------------------
-sax_sq = st_read("C:/Users/sroilo/Desktop/BESTMAP documents/Papers/Land use intensity/revision/VirtualSp_sampled_points_SQ_202030305F.gpkg") %>% st_drop_geometry()
+sax_sq = st_read("C:/Users/sroilo/Desktop/BESTMAP documents/Data/DE_Mulde/Land use intensity/virtualSpecies/VirtualSp_sampled_points_SQ_202030305F.gpkg") %>% st_drop_geometry()
 sum(sax_sq$presence) # 500 points, 99 presences
 # check correlation among variables
 plotd = sax_sq[order(sax_sq$presence, decreasing=F),]
@@ -153,7 +153,7 @@ plot(scor)   # NO PROBLEM !
 
 ### RIDGEPLOTS of LUI values at the presence points of the virtual species -------
 # load the sampled points
-vspec = st_read("C:/Users/sroilo/Desktop/BESTMAP documents/Papers/Land use intensity/revision/VirtualSp_sampled_points_SQ_202030305F.gpkg")
+vspec = st_read("C:/Users/sroilo/Desktop/BESTMAP documents/Data/DE_Mulde/Land use intensity/virtualSpecies/VirtualSp_sampled_points_SQ_202030305F.gpkg")
 # join with LUI metrics from the hexagonal and voronoi grids (square grid info is already in the shapefile)
 hexgrid = st_read("C:/Users/sroilo/Desktop/BESTMAP documents/Data/DE_Mulde/Land use intensity/metrics/Hexagonal_metric_20220908.shp")
 vor = st_read("C:/Users/sroilo/Desktop/BESTMAP documents/Data/DE_Mulde/Land use intensity/metrics/Voronoi_metric_20220908.shp")
@@ -252,5 +252,3 @@ pairs.panels(ploth[, c("presence", "UAA", "Arable", "Arable_UAA", "Conv_farm", "
                        "ALU_homog", "LULC_homog", "LC_homog", "Field_size")], bg=c("blue","yellow")[as.factor(ploth$presence)], pch=21,
              method = "spearman", hist.col = "darkorange", density = TRUE, ellipses = FALSE, 
              main= "Spearman correlation coefficient - sampled points in the voronoi grid" )
-
-
