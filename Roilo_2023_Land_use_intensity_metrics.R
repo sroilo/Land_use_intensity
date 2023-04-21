@@ -3,9 +3,9 @@
 # Title: Roilo_2023_Land_use_intensity_metrics.R
 # Purpose: calculate different land use intensity metrics commonly used in biodiversity models, using different spatial aggregation units (grid types)
 # over the Mulde River Basin, Germany.
-# Reference: Roilo et al. "A multidimensional approach is needed to better quantify land-use intensity in biodiversity models".
-# Author: Stephanie Roilo, Technische Universit‰t Dresden
-# Date: last updated on March 31th, 2023.
+# Reference: Roilo et al. "Quantifying agricultural land-use intensity for spatial biodiversity modelling: caveats and ways forward".
+# Author: Stephanie Roilo, Technische Universit√§t Dresden
+# Date: last updated on April 21st, 2023.
 #
 ###################################################
 
