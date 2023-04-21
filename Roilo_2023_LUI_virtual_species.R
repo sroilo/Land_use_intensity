@@ -3,9 +3,9 @@
 # Title: Roilo_2023_LUI_virtual_species.R
 # Purpose: create a virtual species with known land-use intensity (LUI)-species relationships to test how using different subsets of LUI metrics affects the outcomes of 
 # biodiversity models (we here used Generalised Additive Models to model the virtual species occurrence).
-# Reference: Roilo et al. "A multidimensional approach is needed to better quantify land-use intensity in biodiversity models".
-# Author: Stephanie Roilo, Technische Universit‰t Dresden
-# Date: last updated on March 13th, 2023.
+# Reference: Roilo et al. "Quantifying agricultural land-use intensity for spatial biodiversity modelling: caveats and ways forward".
+# Author: Stephanie Roilo, Technische Universit√§t Dresden
+# Date: last updated on April 21st, 2023.
 #
 ###################################################
 
