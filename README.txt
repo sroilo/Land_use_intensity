@@ -1,7 +1,7 @@
 Description
 ==============
 
-**Roilo, S., Paulus, A., Alarcón-Segura, V., Kock, L., Beckmann, M., Klein, N., Cord, A. A multidimensional approach is needed to better quantify land-use intensity in biodiversity models.
+**Roilo, S., Paulus, A., AlarcÃ³n-Segura, V., Kock, L., Beckmann, M., Klein, N., Cord, A. Quantifying agricultural land-use intensity for spatial biodiversity modelling: implications of different metrics and spatial aggregation methods.
   Please acknowledge this paper when using the code or data outputs.
 
 
@@ -13,11 +13,12 @@ The script is divided into the following sections:
  - computation of land use variables: describes the calculation of each of the 10 LUI metrics;
  - mean LUI and SD across metrics: describes the calculation of mean LUI and standard deviation across the 10 metrics for each grid type;
  - make plots of the different grids & metrics: plots all grids and metrics.
+ - divergence across grid types: calculates different divergence proxies and metrics to compare LUI values across metrics and grids.
 
 Roilo_2023_LUI_virtual_species.R
 --------------
-This R script is used to create a virtual species with known land-use intensity (LUI)-species relationships to test how using different subsets of LUI metrics affects the outcomes of 
-biodiversity models. For this last step, we used Generalised Additive Models to model the virtual species occurrence.
+This R script is used to create three virtual species (grassland, arable land, and wetland species) with known land-use intensity (LUI)-species relationships to test how using different subsets of LUI metrics affects the outcomes of 
+biodiversity models. For this last step, we used Generalised Additive Models to model the virtual species' occurrences.
 The script is divided into the following sections:
  - Create a virtual species: describes the generation of the virtual species based on selected LUI metrics;
  - Modelling virtual species occurrence: described the data preparation steps and the modelling framework using generalised additive models to explain the virtual species occurrence based on LUI metrics;
