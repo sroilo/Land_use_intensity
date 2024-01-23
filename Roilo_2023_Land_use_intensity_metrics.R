@@ -3,9 +3,9 @@
 # Title: Roilo_2023_Land_use_intensity_metrics.R
 # Purpose: calculate different land use intensity metrics commonly used in biodiversity models, using different spatial aggregation units (grid types)
 # over the Mulde River Basin, Germany.
-# Reference: Roilo et al. "Quantifying agricultural land-use intensity for spatial biodiversity modelling: caveats and ways forward".
-# Author: Stephanie Roilo, Technische UniversitÃ¤t Dresden
-# Date: last updated on April 21st, 2023.
+# Reference: Roilo et al. "Quantifying agricultural land-use intensity for spatial biodiversity modelling: effects of different metrics and spatial aggregation methods".
+# Author: Stephanie Roilo, Technische Universität Dresden
+# Date: last updated on September 15th, 2023.
 #
 ###################################################
 
@@ -508,6 +508,59 @@ vor10 = tm_shape(vor) + tm_polygons("LC_homg", palette="viridis", title = expres
 # combine all maps and save to file
 all = tmap_arrange(vor1, vor2, vor3, vor4, vor5, vor6, vor7, vor8, vor9, vor10)
 tmap_save(all, width= 20, height=20, filename="Land use intensity/Voronoi_grid_202210.jpeg")
+
+### DIVERGENCE across grid types (choropleths) ----------------------
+# load the previously computed LUI metrics 
+sqgrid = st_read("Land use intensity/metrics/Square_metric_20220908.shp")
+hexgrid = st_read("Land use intensity/metrics/Hexagonal_metric_20220908.shp")
+vor = st_read("Land use intensity/metrics/Voronoi_metric_20220908.shp")
+# sample random points and then extract values from the different grids
+set.seed(92)
+pts = st_sample(sqgrid[which(sqgrid$UAA>0),], size=20000, type="random") %>% st_sf()
+pts = st_join(pts, sqgrid, left=T)
+pts = st_join(pts, hexgrid, left=T)
+pts = st_join(pts, vor, left=T)
+names(pts) <- c("FID_SQ","UAA_SQ","Arable_SQ", "Arable_UAA_SQ", "Field_size_SQ", "N_input_SQ", "Intens_f_SQ", "Conv_farm_SQ", "ALU_homog_SQ", "LULC_homog_SQ", "LC_homog_SQ",
+                "FID_HX","UAA_HX","Arable_HX", "Arable_UAA_HX", "Field_size_HX", "N_input_HX", "Intens_f_HX", "Conv_farm_HX", "ALU_homog_HX", "LULC_homog_HX", "LC_homog_HX",
+                "FID_VO","UAA_VO","Arable_VO", "Arable_UAA_VO", "Field_size_VO", "N_input_VO", "Intens_f_VO", "Conv_farm_VO", "ALU_homog_VO", "LULC_homog_VO", "LC_homog_VO", "geometry")
+# remove eventual NAs from the hexagonal and voronoi grids
+pts = na.omit(pts)  #19366 points remaining
+
+# calculate the absolute difference between the values of the same metric aggregated using different grids
+mnames = c("UAA","Arable", "Arable_UAA", "Field_size", "N_input", "Intens_f", "Conv_farm", "ALU_homog", "LULC_homog", "LC_homog")
+# drop geometry to ease calculations
+ptsng = st_drop_geometry(pts)
+# calculate absolute difference between SQ and HX, and between SQ and VO
+for (i in 2:11) {
+  pts[,paste0("diff_", mnames[(i-1)], "_SH")] = abs(ptsng[,i] - ptsng[(i+11)])
+  pts[,paste0("diff_", mnames[(i-1)], "_SV")] = abs(ptsng[,i] - ptsng[(i+22)])  
+}
+#save to file
+write_sf(pts, "Land use intensity/Cross_grid_divergence_points_20220910.gpkg")
+
+# create classes for a bivariate choropleth  map, as explained here https://cran.r-project.org/web/packages/biscale/vignettes/biscale.html 
+library(biscale)
+library(cowplot)
+pts = read_sf("Land use intensity/Cross_grid_divergence_points_20220910.gpkg")
+# make choropleth maps for each of the ten metrics, highlighting differences between the square and the hexagonal and the voronoi grids
+data <- bi_class(pts, x = diff_Field_size_SH, y = diff_Field_size_SV, style = "equal", dim = 3) # change name of metric at x and y 
+# create map
+map <- ggplot() +
+  geom_sf(data = data, mapping = aes(color = bi_class), show.legend = F) +
+  bi_scale_color(pal = "GrPink", dim = 3) +bi_theme() 
+
+# add legend manually
+legend <- bi_legend(pal = "GrPink",
+                    dim = 3,
+                    xlab = "|SQ - HX| ",
+                    ylab = "|SQ - VO| ",
+                    size = 14)
+
+# combine map with legend
+finalPlot <- ggdraw() +
+  draw_plot(map, 0, 0, 1, 1) +
+  draw_plot(legend, 0.5, 0.6, 0.4, 0.4)
+ggsave(filename="Land use intensity/images/maps/Divergence_Field_size.jpg", width= 1300, height= 2000, units="px", plot = last_plot())  # change name of output file according to metric
 
 
 rm(list=ls())
